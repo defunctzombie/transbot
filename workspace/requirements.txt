@@ -1,0 +1,4 @@
+# oled display
+Adafruit_SSD1306
+psutil
+requests

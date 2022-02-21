@@ -1,0 +1,34 @@
+<launch>
+    <arg name="var_folder" default="/opt/transbot/var" />
+    <arg name="etc_folder" default="/opt/transbot/etc" />
+    <arg name="bag_folder" default="$(arg var_folder)/bags" />
+
+    <!-- load params specific to our deployed robot -->
+    <rosparam command="load" file="$(arg etc_folder)/params.yaml" />
+
+    <node name="record" pkg="rosbag" type="record"
+        args="record -o $(arg bag_folder)/transbot --duration 300 --lz4 --tcpnodelay --split --all"
+    />
+
+    <node name="foxglove_uploader" pkg="foxglove_uploader" type="foxglove_uploader_node.py" output="screen">
+        <param name="folder" type="str" value="$(arg bag_folder)" />
+        <param name="api_key" textfile="$(arg etc_folder)/foxglove_api_key.txt" />
+    </node>
+
+    <node name="camera_front" pkg="usb_cam" type="usb_cam_node">
+        <param name="pixel_format" value="yuyv" />
+        <param name="camera_frame_id" value="camera_front" />
+        <param name="camera_name" value="/camera_front" />
+    </node>
+
+    <!-- https://github.com/Slamtec/rplidar_ros -->
+    <node name="lidar" pkg="rplidar_ros" type="rplidarNode">
+        <param name="frame_id" value="laser" />
+        <remap from="/scan" to="/laser_scan"/>
+    </node>
+
+    <node name="oled_display" pkg="oled_display" type="oled_display_node.py" />
+    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch">
+        <arg name="port" value="9090" />
+    </include>
+</launch>
