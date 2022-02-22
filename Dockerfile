@@ -6,6 +6,7 @@ RUN apt install make g++ -y
 RUN apt install python3-pip -y
 RUN apt install ros-noetic-usb-cam -y
 RUN apt install ros-noetic-rplidar-ros -y
+RUN apt install ros-noetic-compressed-image-transport -y
 
 COPY workspace/requirements.txt /opt/transbot/workspace/
 RUN pip install -r /opt/transbot/workspace/requirements.txt

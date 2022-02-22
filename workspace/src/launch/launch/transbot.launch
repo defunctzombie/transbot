@@ -7,7 +7,7 @@
     <rosparam command="load" file="$(arg etc_folder)/params.yaml" />
 
     <node name="record" pkg="rosbag" type="record"
-        args="record -o $(arg bag_folder)/transbot --duration 300 --lz4 --tcpnodelay --split --all"
+        args="record -o $(arg bag_folder)/transbot -x /camera_front/image_raw --chunksize 10240 --duration 300 --tcpnodelay --split --all"
     />
 
     <node name="foxglove_uploader" pkg="foxglove_uploader" type="foxglove_uploader_node.py" output="screen">
